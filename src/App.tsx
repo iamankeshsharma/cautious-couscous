@@ -1,12 +1,10 @@
 import './App.css'
-import {useRef} from 'react';
+import Canvas from './component/canvas';
 
 function App() {
-  const canvasRef = useRef(null);
-
   return (
     <>
-      <canvas ref={canvasRef}/>
+      <Canvas></Canvas>
     </>
   )
 }
