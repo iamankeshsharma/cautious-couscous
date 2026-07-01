@@ -56,7 +56,7 @@ export default function Canvas() {
 
   useCanvas(canvasRef);
 
-  const { getCanvas, setCords, setCurrent } = useStore();
+  const { setCords, setCurrent } = useStore();
 
   useEffect(() => {
     setCords(shape);
