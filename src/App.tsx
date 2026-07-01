@@ -2,6 +2,7 @@ import "./App.css";
 import Canvas from "./components/canvas";
 import ToolBar from "./components/toolBar";
 import { Store } from "./context/StateContext";
+import { Analytics } from "@vercel/analytics/next"
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <ToolBar />
         <Canvas />
       </Store>
+      <Analytics />
     </>
   );
 }
