@@ -1,5 +1,7 @@
+import { TOOLS } from "@/constants/toolBar";
 import { useStore } from "@/context/StateContext";
 import { useEffect, useRef, useState } from "react";
+import type { keyType } from "./toolBar";
 
 function useCanvas(ref: React.RefObject<HTMLCanvasElement | null>) {
   const { setCanvas } = useStore();
@@ -22,75 +24,99 @@ function useCanvas(ref: React.RefObject<HTMLCanvasElement | null>) {
         setCanvas(obj);
       }
     }
-  });
+  }, []);
 }
 
 export type SHAPE = {
+  id: number;
   type: string;
+  strokeStyle: string;
   x: number;
   y: number;
 };
 
-export const drawRect = (
-  canvas: CanvasRenderingContext2D,
-  cords: SHAPE[][],
-  current: SHAPE,
-) => {
-  let last = null;
-  if (cords !== null && cords.length >= 2) {
-    last = cords[cords.length - 1];
-  }
-  if (current && last) {
-    last[1] = current;
+const draw = ({
+  canvas,
+  cords,
+  current,
+}: {
+  canvas: CanvasRenderingContext2D;
+  cords: SHAPE[][];
+  current: SHAPE;
+}) => {
+  canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
 
-    const width = last[1]?.x - last[0]?.x;
-    const height = last[1]?.y - last[0]?.y;
-    canvas.strokeRect(last[0].x, last[0].y, width, height);
+  for (const cord of cords) {
+    TOOLS[cord[0].type as keyType].draw({ canvas, cord, current });
   }
 };
 
 export default function Canvas() {
   const [shape, setShapes] = useState<SHAPE[][]>([]);
-  const [move, setMove] = useState(false);
+  const [current, setCurrent] = useState<SHAPE | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [move, setMove] = useState(false);
+  const [count, setCount] = useState(0);
 
   useCanvas(canvasRef);
 
-  const { setCords, setCurrent } = useStore();
+  const { hotKey, setCords, getCanvas, color, setHotKey } = useStore();
+  const storeCords = (shape: SHAPE[][]) => {
+    const canvas = getCanvas();
+    setCords(shape);
+
+    if (canvas && shape && hotKey && current) {
+      draw({ canvas, cords: shape, current });
+    }
+  };
+
+  const handleShapeChange = (
+    event: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+  ) => {
+    if (hotKey) {
+      const newShape = {
+        id: count,
+        type: hotKey ? hotKey : "",
+        strokeStyle: color,
+        x: event.clientX,
+        y: event.clientY,
+      };
+      const data: SHAPE[][] = [...shape];
+
+      if (event.type === "mousedown") {
+        setMove(true);
+        if (data?.length === 0 || data[data.length - 1]?.length >= 2) {
+          data.push([newShape]);
+          setShapes(data);
+        }
+      } else if (event.type === "mousemove" && move) {
+        if (shape[shape.length - 1].length < 2) {
+          setCurrent(newShape);
+        }
+      } else if (event.type === "mouseup") {
+        data[data.length - 1].push(newShape);
+        setShapes(data);
+        setCount((prev) => ++prev);
+        setCurrent(null);
+        setHotKey(null);
+        setMove(false);
+      }
+    }
+  };
 
   useEffect(() => {
-    setCords(shape);
-  }, [shape]);
+    if (shape && hotKey && current) {
+      storeCords(shape);
+    }
+  }, [current, shape]);
 
   return (
-    <>
-      <canvas
-        onMouseDown={(event) => {
-          setShapes((prev) => [
-            ...prev,
-            [{ type: "R", x: event.clientX, y: event.clientY }],
-          ]);
-          setMove(true);
-        }}
-        onMouseMove={(event) => {
-          if (move)
-            setCurrent({ type: "R", x: event.clientX, y: event.clientY });
-        }}
-        onMouseUp={(event) => {
-          setMove(false);
-          setShapes((prev) => {
-            const last = prev[prev.length - 1];
-            last[1] = {
-              type: "R",
-              x: event.clientX,
-              y: event.clientY,
-            };
-            return [...prev, last];
-          });
-        }}
-        className="h-screen w-screen bg-gray-300 cursor-pointer"
-        ref={canvasRef}
-      />
-    </>
+    <canvas
+      onMouseDown={handleShapeChange}
+      onMouseMove={handleShapeChange}
+      onMouseUp={handleShapeChange}
+      className="h-screen w-screen bg-gray-300 cursor-pointer"
+      ref={canvasRef}
+    />
   );
 }

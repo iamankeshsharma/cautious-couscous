@@ -1,199 +1,106 @@
-export const TOOLS = [
-  {
-    id: "general",
-    label: "General",
-    items: [
-      {
-        id: "note",
-        label: "Note",
-        icon: "note",
-        shortcut: "N",
-      },
-      {
-        id: "package",
-        label: "Package",
-        icon: "package",
-        shortcut: "P",
-      },
-    ],
-  },
+import type { SHAPE } from "@/components/canvas";
 
-  {
-    id: "use-case",
-    label: "Use Case",
-    items: [
-      {
-        id: "actor",
-        label: "Actor",
-        icon: "actor",
-        shortcut: "A",
-      },
-      {
-        id: "use-case",
-        label: "Use Case",
-        icon: "ellipse",
-        shortcut: "U",
-      },
-    ],
+export const TOOLS = {
+  R: {
+    label: "Rectangle",
+    hotkey: "R",
+    draw: ({
+      canvas,
+      cord,
+      current,
+    }: {
+      canvas: CanvasRenderingContext2D;
+      cord: SHAPE[];
+      current: SHAPE;
+    }) => {
+      if (cord !== null && cord.length <= 2) {
+        const end = cord[1] || current;
+        const width = end.x - cord[0].x;
+        const height = end.y - cord[0].y;
+        canvas.strokeStyle = end.strokeStyle;
+        canvas.strokeRect(cord[0].x, cord[0].y, width, height);
+      }
+    },
   },
-
-  {
-    id: "class",
-    label: "Class Diagram",
-    items: [
-      {
-        id: "class",
-        label: "Class",
-        icon: "rectangle",
-        shortcut: "C",
-      },
-      {
-        id: "object",
-        label: "Object",
-        icon: "rectangle",
-        shortcut: "Shift+C",
-      },
-      {
-        id: "interface",
-        label: "Interface",
-        icon: "interface",
-        shortcut: "I",
-      },
-      {
-        id: "enumeration",
-        label: "Enumeration",
-        icon: "enum",
-        shortcut: "E",
-      },
-    ],
+  D: {
+    label: "Diamond",
+    hotkey: "D",
+    draw: ({
+      canvas,
+      cord,
+      current,
+    }: {
+      canvas: CanvasRenderingContext2D;
+      cord: SHAPE[];
+      current: SHAPE;
+    }) => {
+      if (cord !== null && cord.length <= 2) {
+        const end = cord[1] || current;
+        const width = end.x - cord[0].x;
+        const height = end.y - cord[0].y;
+        canvas.strokeStyle = end.strokeStyle;
+        canvas.strokeRect(cord[0].x, cord[0].y, width, height);
+      }
+    },
   },
-
-  {
-    id: "activity",
-    label: "Activity",
-    items: [
-      {
-        id: "activity",
-        label: "Activity",
-        icon: "rounded-rectangle",
-        shortcut: "R",
-      },
-      {
-        id: "decision",
-        label: "Decision",
-        icon: "diamond",
-        shortcut: "D",
-      },
-      {
-        id: "merge",
-        label: "Merge",
-        icon: "diamond-outline",
-        shortcut: "Shift+D",
-      },
-      {
-        id: "fork",
-        label: "Fork",
-        icon: "fork",
-        shortcut: "F",
-      },
-      {
-        id: "join",
-        label: "Join",
-        icon: "join",
-        shortcut: "Shift+F",
-      },
-      {
-        id: "initial",
-        label: "Initial State",
-        icon: "start",
-        shortcut: "S",
-      },
-      {
-        id: "final",
-        label: "Final State",
-        icon: "end",
-        shortcut: "Shift+S",
-      },
-    ],
+  C: {
+    label: "Circle",
+    hotkey: "C",
+    draw: ({
+      canvas,
+      cord,
+      current,
+    }: {
+      canvas: CanvasRenderingContext2D;
+      cord: SHAPE[];
+      current: SHAPE;
+    }) => {
+      console.log("circle");
+    },
   },
-
-  {
-    id: "component",
-    label: "Architecture",
-    items: [
-      {
-        id: "component",
-        label: "Component",
-        icon: "component",
-        shortcut: "M",
-      },
-      {
-        id: "database",
-        label: "Database",
-        icon: "database",
-        shortcut: "B",
-      },
-      {
-        id: "node",
-        label: "Node / Server",
-        icon: "node",
-        shortcut: "Shift+M",
-      },
-    ],
+  A: {
+    label: "Arrow",
+    hotkey: "A",
+    draw: ({
+      canvas,
+      cord,
+      current,
+    }: {
+      canvas: CanvasRenderingContext2D;
+      cord: SHAPE[];
+      current: SHAPE;
+    }) => {
+      console.log("arrow");
+    },
   },
-
-  {
-    id: "relationships",
-    label: "Relationships",
-    items: [
-      {
-        id: "association",
-        label: "Association",
-        icon: "association",
-        shortcut: "1",
-      },
-      {
-        id: "directed-association",
-        label: "Directed Association",
-        icon: "association-arrow",
-        shortcut: "2",
-      },
-      {
-        id: "dependency",
-        label: "Dependency",
-        icon: "dependency",
-        shortcut: "3",
-      },
-      {
-        id: "generalization",
-        label: "Generalization",
-        icon: "generalization",
-        shortcut: "4",
-      },
-      {
-        id: "realization",
-        label: "Realization",
-        icon: "realization",
-        shortcut: "5",
-      },
-      {
-        id: "aggregation",
-        label: "Aggregation",
-        icon: "aggregation",
-        shortcut: "6",
-      },
-      {
-        id: "composition",
-        label: "Composition",
-        icon: "composition",
-        shortcut: "7",
-      },
-      {
-        id: "flow",
-        label: "Flow",
-        icon: "arrow",
-        shortcut: "8",
-      },
-    ],
+  L: {
+    label: "Line",
+    hotkey: "L",
+    draw: ({
+      canvas,
+      cord,
+      current,
+    }: {
+      canvas: CanvasRenderingContext2D;
+      cord: SHAPE[];
+      current: SHAPE;
+    }) => {
+      console.log("line");
+    },
   },
-];
+  T: {
+    label: "Text",
+    hotkey: "T",
+    draw: ({
+      canvas,
+      cord,
+      current,
+    }: {
+      canvas: CanvasRenderingContext2D;
+      cord: SHAPE[];
+      current: SHAPE;
+    }) => {
+      console.log("text");
+    },
+  },
+};

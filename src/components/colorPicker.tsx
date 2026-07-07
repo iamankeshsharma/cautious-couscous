@@ -19,13 +19,13 @@ export default function ColorPicker({
     <>
       <div
         className={twMerge(
-          `w-full h-full flex flex-col items-center border`,
+          `rounded-full w-full h-full flex flex-col items-center border`,
           className,
         )}
         onClick={toggle}
         style={{ backgroundColor: color }}
       >
-        <div hidden={open} className="relative top-5">
+        <div hidden={open} className="relative top-9">
           <Compact
             className="ml-5"
             color={color}
