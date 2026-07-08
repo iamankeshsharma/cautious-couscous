@@ -52,8 +52,8 @@ export default function ToolBar() {
 
   return (
     <>
-      <div className="flex justify-center fixed w-full mt-3 h-auto">
-        <Menubar className="p-3 flex justify-between items-center bg-gray-200 shadow-2xs border border-gray-300 w-1/2 h-10">
+      <div className="flex justify-center fixed w-full px-3 mt-3 h-auto">
+        <Menubar className="p-3 flex flex-wrap sm:flex-nowrap sm:flex-row justify-center items-center sm:justify-between gap-5 bg-gray-200 shadow-2xs border border-gray-300 w-fit h-auto sm:h-10">
           <MenubarMenu>
             {Object.keys(TOOLS).map((Key, i) => {
               const key = Key as keyType;

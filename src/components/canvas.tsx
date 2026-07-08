@@ -39,15 +39,23 @@ const draw = ({
   canvas,
   cords,
   current,
+  drawing,
 }: {
   canvas: CanvasRenderingContext2D;
   cords: SHAPE[][];
   current: SHAPE;
+  drawing: boolean;
 }) => {
   canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
 
   for (const cord of cords) {
-    TOOLS[cord[0].type as keyType].draw({ canvas, cord, current });
+    TOOLS[cord[0].type as keyType].draw({
+      canvas,
+      cord,
+      current,
+      drawing,
+      ratio: 0.6,
+    });
   }
 };
 
@@ -56,6 +64,7 @@ export default function Canvas() {
   const [current, setCurrent] = useState<SHAPE | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [move, setMove] = useState(false);
+  const [drawing, setDrawing] = useState(false);
   const [count, setCount] = useState(0);
 
   useCanvas(canvasRef);
@@ -66,7 +75,7 @@ export default function Canvas() {
     setCords(shape);
 
     if (canvas && shape && hotKey && current) {
-      draw({ canvas, cords: shape, current });
+      draw({ canvas, cords: shape, current, drawing });
     }
   };
 
@@ -88,18 +97,41 @@ export default function Canvas() {
         if (data?.length === 0 || data[data.length - 1]?.length >= 2) {
           data.push([newShape]);
           setShapes(data);
+          if (hotKey === "P") setDrawing(true);
         }
       } else if (event.type === "mousemove" && move) {
-        if (shape[shape.length - 1].length < 2) {
+        if (!drawing && shape[shape.length - 1].length < 2) {
           setCurrent(newShape);
+        } else {
+          const last = shape[shape.length - 1];
+          const isContinous = last[0].id === count;
+          if (isContinous) {
+            const lastData = [...last, newShape];
+            data.push([...lastData]);
+            setShapes(data);
+            const canvas = getCanvas();
+            // console.log("test", canvas, current);
+            if (canvas) {
+              TOOLS[hotKey as keyType].draw({
+                canvas,
+                cord:lastData,
+                current:newShape,
+                drawing,
+                ratio: 0.6,
+              });
+            }
+          }
         }
       } else if (event.type === "mouseup") {
+        setDrawing(false);
         data[data.length - 1].push(newShape);
         setShapes(data);
         setCount((prev) => ++prev);
         setCurrent(null);
         setHotKey(null);
         setMove(false);
+      } else if (event.type === "mouseleave") {
+        setDrawing(false);
       }
     }
   };
@@ -115,6 +147,7 @@ export default function Canvas() {
       onMouseDown={handleShapeChange}
       onMouseMove={handleShapeChange}
       onMouseUp={handleShapeChange}
+      onMouseLeave={handleShapeChange}
       className="h-screen w-screen bg-gray-300 cursor-pointer"
       ref={canvasRef}
     />
